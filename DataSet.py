@@ -1,11 +1,14 @@
 from torch.utils.data import Dataset, DataLoader
+import torch
 import csv
 from preprocess import clean_str
+from statistics import max_post_len
+from sklearn.model_selection import StratifiedShuffleSplit
 
-
-bsz = 64
+bsz = 31
 sent_dict = {}
-word2idx = {}
+word2idx = {'pad':0}
+
 
 class TwitterData(Dataset):
     
@@ -14,6 +17,7 @@ class TwitterData(Dataset):
         y_pred = []
 
         with open(filename) as test:
+            next(test)
             r = csv.reader(test, delimiter=',')
             for l in r:
                 #create the dictionary with the sentiment indeces
@@ -23,12 +27,25 @@ class TwitterData(Dataset):
                 #clean the sentence
                 sentence = clean_str(l[3])
 
+                words = sentence.split()
+                for word in words:
+                    if word not in word2idx:
+                        word2idx[word] = len(word2idx)
+
+                sentence_idx = []
+                for word in words:
+                    sentence_idx.append(word2idx[word])
+
+                for i in range(max_post_len-len(words)):
+                    sentence_idx.append(0)
+
                 #add to the lists
-                X.append(sentence)
+                X.append(sentence_idx)
                 y_pred.append(sent_dict[l[1]])
 
-        self.x_data = X
-        self.y_data = y_pred
+
+        self.x_data = torch.LongTensor(X)
+        self.y_data = torch.LongTensor(y_pred)
         self.len = len(self.x_data)
 
 
@@ -40,5 +57,13 @@ class TwitterData(Dataset):
 
 
 twitterData = TwitterData("train.csv")
-# TODO split the data for into sets(sklearn)
-train_loader = DataLoader(dataset=twitterData, batch_size=bsz, shuffle=True)
+sss = StratifiedShuffleSplit(n_splits=1, test_size=0.2)
+train_data = []
+test_data = []
+for train, test in sss.split(twitterData.x_data, twitterData.y_data):
+    for i in train:
+        train_data.append(twitterData[i])
+    for i in test:
+        test_data.append(twitterData[i])
+train_loader = DataLoader(dataset=train_data, batch_size=bsz, shuffle=True)
+
