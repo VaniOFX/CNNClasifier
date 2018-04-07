@@ -3,6 +3,7 @@ import re
 import collections
 import math
 from preprocess import clean_str
+import matplotlib.pyplot as plt
 
 sent_number = 0
 word_number = 0
@@ -12,6 +13,7 @@ max_sent = []
 number_posts = 0
 max_post_len = 0
 max_post = []
+sent_dict = {}
 
 
 with open('train.csv') as test:
@@ -19,6 +21,11 @@ with open('train.csv') as test:
     r = csv.reader(test, delimiter=',')
     for l in r:
         number_posts += 1
+
+        if l[1] not in sent_dict:
+            sent_dict[l[1]] = 0
+        else:
+            sent_dict[l[1]] += 1
 
         l[3] = clean_str(l[3])
 
@@ -68,8 +75,17 @@ if __name__ == "__main__":
     print("The number of unique words is", len(set(words_list)))
     print("The number of words is", word_number)
     print("The sentence standart deviation is", standard_deviation)
+    print()
+    for sent in sent_dict:
+        print("The sentiment {} has {} examples".format(sent, sent_dict[sent]))
 
 
+    def get_cmap(n, name='hsv'):
+        return plt.cm.get_cmap(name, n)
+
+    cmap = get_cmap(13)
+    plt.pie([sent_dict[x] for x in sent_dict], labels=[x for x in sent_dict], colors=[cmap(x) for x in range(13)], explode=([0.25]*13), startangle=90, autopct='%1.1f%%')
+    plt.show()
 
 
 

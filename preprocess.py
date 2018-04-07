@@ -3,22 +3,8 @@ import nltk
 import itertools
 nltk.download('stopwords')
 
-# def clean_str(string):
-#     string = re.sub(r"[^A-Za-z0-9(),!?\'\`]", " ", string)
-#     string = re.sub(r"\'s", " \'s", string)
-#     string = re.sub(r"\'ve", " \'ve", string)
-#     string = re.sub(r"n\'t", " n\'t", string)
-#     string = re.sub(r"\'re", " \'re", string)
-#     string = re.sub(r"\'d", " \'d", string)
-#     string = re.sub(r"\'ll", " \'ll", string)
-#     string = re.sub(r",", " , ", string)
-#     string = re.sub(r"!", " ! ", string)
-#     string = re.sub(r"\(", " \( ", string)
-#     string = re.sub(r"\)", " \) ", string)
-#     string = re.sub(r"\?", " \? ", string)
-#     string = re.sub(r"\s{2,}", " ", string)
-#     return string.strip().lower()
-#
+
+
 contractions = {
     "ain't": "am not / are not",
     "aren't": "are not / am not",
@@ -164,5 +150,7 @@ def clean_str(string):
     words = string.split()
     words = [word.lower() for word in words if word.isalpha() and word not in stop_words]
     string = ' '.join(words)
+
+
 
     return string

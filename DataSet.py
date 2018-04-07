@@ -5,9 +5,9 @@ from preprocess import clean_str
 from statistics import max_post_len
 from sklearn.model_selection import StratifiedShuffleSplit
 
-bsz = 31
+bsz = 128
 sent_dict = {}
-word2idx = {'pad':0}
+word2idx = {'pad': 0}
 
 
 class TwitterData(Dataset):
@@ -66,4 +66,4 @@ for train, test in sss.split(twitterData.x_data, twitterData.y_data):
     for i in test:
         test_data.append(twitterData[i])
 train_loader = DataLoader(dataset=train_data, batch_size=bsz, shuffle=True)
-
+test_loader = DataLoader(dataset=test_data, batch_size=bsz)
