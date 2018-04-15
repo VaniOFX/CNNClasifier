@@ -1,0 +1,14 @@
+bsz = 64
+LEARNING_RATE = 0.0006
+EMBEDDING_DIM = 100
+DROPOUT_PROB = 0.5
+EPOCH = 50
+bow = False
+max_dict_len = 5000
+cnn = True
+POOLING = 4
+POOLING_TYPE = 'avg'
+KERNEL_SIZE = 5 * EMBEDDING_DIM
+STRIDE = 3
+K2 = 20
+PADDING = 4

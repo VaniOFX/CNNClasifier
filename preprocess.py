@@ -4,7 +4,6 @@ import itertools
 nltk.download('stopwords')
 
 
-
 contractions = {
     "ain't": "am not / are not",
     "aren't": "are not / am not",
@@ -126,7 +125,7 @@ contractions = {
 }
 
 def clean_str(string):
-    #remove many characters
+    # remove repeating characters
     string = ''.join(''.join(s)[:2] for _, s in itertools.groupby(string))
 
     # unescape html tags
@@ -150,7 +149,5 @@ def clean_str(string):
     words = string.split()
     words = [word.lower() for word in words if word.isalpha() and word not in stop_words]
     string = ' '.join(words)
-
-
 
     return string

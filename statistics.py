@@ -10,10 +10,12 @@ word_number = 0
 words_list = []
 max_sent_len = 0
 max_sent = []
+max_test_sent_len = 0
 number_posts = 0
 max_post_len = 0
 max_post = []
 sent_dict = {}
+unknown = 0
 
 
 with open('train.csv') as test:
@@ -27,7 +29,7 @@ with open('train.csv') as test:
         else:
             sent_dict[l[1]] += 1
 
-        l[3] = clean_str(l[3])
+        #l[3] = clean_str(l[3])
 
         #max post length
         if len(l[3].split()) > max_post_len:
@@ -51,33 +53,51 @@ with open('train.csv') as test:
         word_number += len(words)
         words_list += words
 
-
     mean = int(word_number / sent_number)
 
+#find the Standard Deviation
 with open('train.csv') as test:
     r = csv.reader(test, delimiter=',')
-    #find the Standard Deviation
+    next(test)
     total_dev = 0
     for l in r:
+        #l[3] = clean_str(l[3])
         total_dev += len(l[3].split()) - mean
-
     standard_deviation = int(math.sqrt(total_dev ** 2 / sent_number))
 
+with open('test_for_you_guys.csv') as test:
+    r = csv.reader(test, delimiter=',')
+    next(test)
+    unique_words = set(words_list)
+    for l in r:
+        #l[2] = clean_str(l[2])
+        words = l[2].split()
+        if len(words) > max_test_sent_len:
+            max_test_sent_len = len(words)
+
+        for word in words:
+            if word not in unique_words:
+                unknown += 1
+
+
+
 if __name__ == "__main__":
-    print("The number of posts is", number_posts)
-    print("The maximum post length is", max_post_len)
-    print(max_post)
-    print("The number of sentences is", sent_number)
-    print("The maximum sentence length is", max_sent_len)
-    print(max_sent)
-    print("\nThe average sentence length is", mean)
-    print("The most common words are\n", collections.Counter(words_list).most_common(10))
-    print("The number of unique words is", len(set(words_list)))
-    print("The number of words is", word_number)
-    print("The sentence standart deviation is", standard_deviation)
+    print("Number of Posts:", number_posts)
+    print("Maximum Post Length", max_post_len)
+    print("The post:\n", max_post)
+    print("Number of Sentences:", sent_number)
+    print("Maximum Sentence Length:", max_sent_len)
+    print("The sentence:\n",max_sent)
+    print("Average Sentence Length:", mean)
+    print("Sentence Standard Deviation:", standard_deviation)
+    print("10 most common words:\n", collections.Counter(words_list).most_common(10))
+    print("Number of unique words:", len(set(words_list)))
+    print("Number of words:", word_number)
+    print("UNKNOWN rate:", unknown)
+    print("Maximum Sentence Length in test set:", max_test_sent_len)
     print()
     for sent in sent_dict:
-        print("The sentiment {} has {} examples".format(sent, sent_dict[sent]))
+        print("Number examples for {}: {} ({}%)".format(sent, sent_dict[sent], sent_dict[sent]/20000 * 100))
 
 
     def get_cmap(n, name='hsv'):
